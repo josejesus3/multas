@@ -114,10 +114,11 @@ class FormularioState extends ConsumerState<Formulario> {
                     folioController.text,
                     folioPagoController.text,
                     cantidadFolioController.text,
-                    insfraccionController.text,
+                    check,
                     fechasPagoController.text,
                     foraneasController.text);
               });
+              print(check);
             },
             icon: Icons.add_circle_outlined,
             label: 'Agregar',
@@ -257,7 +258,7 @@ void _validacion(
     String folio,
     String folioPago,
     String cantidadFolio,
-    String infraccion,
+    bool check,
     String fechasPago,
     String foraneas) {
   if (placa.isEmpty ||
@@ -266,7 +267,6 @@ void _validacion(
       folio.isEmpty ||
       folioPago.isEmpty ||
       cantidadFolio.isEmpty ||
-      infraccion.isEmpty ||
       fechasPago.isEmpty ||
       foraneas.isEmpty) {
     print('entro');
@@ -301,7 +301,7 @@ void _validacion(
         folio: int.parse(folio),
         folioPago: folioPago,
         cantidadPago: double.parse(cantidad),
-        infraccion: true,
+        infraccion: check,
         fechaPago: fechasPago,
         foraneas: foraneas);
 
