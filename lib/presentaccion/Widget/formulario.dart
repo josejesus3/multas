@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:multas/domain/conexion/connection_mysql.dart';
+import 'package:multas/domain/entiti/list_multas.dart';
+import 'package:multas/presentaccion/provider/read_provider.dart';
 
-class Formulario extends StatefulWidget {
+class Formulario extends ConsumerStatefulWidget {
   const Formulario({
     super.key,
   });
 
   @override
-  State<Formulario> createState() => _FormularioState();
+  FormularioState createState() => FormularioState();
 }
 
-class _FormularioState extends State<Formulario> {
+class FormularioState extends ConsumerState<Formulario> {
   TextEditingController placaController = TextEditingController();
   TextEditingController cantidadController = TextEditingController();
   TextEditingController fechaController = TextEditingController();
@@ -19,16 +24,19 @@ class _FormularioState extends State<Formulario> {
   TextEditingController insfraccionController = TextEditingController();
   TextEditingController fechasPagoController = TextEditingController();
   TextEditingController foraneasController = TextEditingController();
-  final String municipio = '72';
+  final int municipio = 72;
   final String status = 'A';
   @override
   Widget build(BuildContext context) {
+    final sized = MediaQuery.of(context).size;
+    final bool check = ref.watch(checkBox);
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Wrap(
         children: [
           _TEXT(
-            text: 'Municipio: $municipio',
+            text: 'Municipio: ${municipio.toString()}',
             icon: Icons.house_outlined,
           ),
           _TEXT(
@@ -44,16 +52,19 @@ class _FormularioState extends State<Formulario> {
             textController: cantidadController,
             label: 'Cantidad',
             icon: Icons.currency_exchange,
+            numericOnly: true,
           ),
           _Campos(
             textController: fechaController,
             label: 'Fecha',
             icon: Icons.calendar_month_sharp,
+            helper: 'Ejemplo: 22/03/2024',
           ),
           _Campos(
             textController: folioController,
             label: 'Folio',
             icon: Icons.car_crash_outlined,
+            numericOnly: true,
           ),
           _Campos(
             textController: folioPagoController,
@@ -64,16 +75,27 @@ class _FormularioState extends State<Formulario> {
             textController: cantidadFolioController,
             label: 'Cantidad de folio',
             icon: Icons.currency_exchange,
+            numericOnly: true,
           ),
-          _Campos(
-            textController: insfraccionController,
-            label: 'Insfraccion',
-            icon: Icons.dangerous,
+          Padding(
+            padding: const EdgeInsets.all(30),
+            child: SizedBox(
+              width: sized.width <= 800 ? sized.width * 0.7 : sized.width * 0.2,
+              child: CheckboxListTile(
+                value: check,
+                onChanged: (value) {
+                  ref.read(checkBox.notifier).update((state) => !state);
+                },
+                title: const Text('Estado'),
+                secondary: const Icon(Icons.check_circle_outlined),
+              ),
+            ),
           ),
           _Campos(
             textController: fechasPagoController,
             label: 'Fecha de Pago',
             icon: Icons.calendar_month_outlined,
+            helper: 'Ejemplo: 22/03/2024',
           ),
           _Campos(
             textController: foraneasController,
@@ -84,6 +106,8 @@ class _FormularioState extends State<Formulario> {
               setState(() {
                 _validacion(
                     context,
+                    municipio,
+                    status,
                     placaController.text,
                     cantidadController.text,
                     fechaController.text,
@@ -179,7 +203,15 @@ class _Campos extends StatelessWidget {
   final TextEditingController textController;
   final IconData? icon;
   final String label;
-  const _Campos({required this.textController, required this.label, this.icon});
+  final bool numericOnly;
+  final String? helper;
+  const _Campos({
+    required this.textController,
+    required this.label,
+    this.icon,
+    this.helper,
+    this.numericOnly = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -196,9 +228,16 @@ class _Campos extends StatelessWidget {
         width: sized.width <= 800 ? sized.width * 0.7 : sized.width * 0.2,
         child: TextField(
           controller: textController,
+          keyboardType: numericOnly
+              ? TextInputType.number
+              : null, // Solo números si se indica
+          inputFormatters: numericOnly
+              ? [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))]
+              : null,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.all(8),
             label: Text(label),
+            helperText: helper,
             prefixIcon: Icon(icon),
             focusedBorder: inputBorder,
           ),
@@ -210,6 +249,8 @@ class _Campos extends StatelessWidget {
 
 void _validacion(
     BuildContext context,
+    int municipio,
+    String status,
     String placa,
     String cantidad,
     String fecha,
@@ -251,5 +292,19 @@ void _validacion(
         ),
       ),
     );
+    ListMultas multa = ListMultas(
+        municipio: municipio,
+        status: status,
+        placa: placa,
+        cantidad: double.parse(cantidad),
+        fecha: fecha,
+        folio: int.parse(folio),
+        folioPago: folioPago,
+        cantidadPago: double.parse(cantidad),
+        infraccion: true,
+        fechaPago: fechasPago,
+        foraneas: foraneas);
+
+    ConnectionMysql().insertQuery(multa);
   }
 }

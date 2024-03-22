@@ -14,6 +14,9 @@ AppBar getAppBarNotSearching() {
                 ref.read(isSearching.notifier).state = true;
               });
         },
+      ),
+      const SizedBox(
+        width: 40,
       )
     ],
   );
@@ -32,23 +35,31 @@ AppBar getAppBarSearching(TextEditingController searchController) {
       },
     ),
     title: Padding(
-      padding: const EdgeInsets.only(bottom: 10, right: 10),
+      padding: const EdgeInsets.only(
+        bottom: 10,
+      ),
       child: TextField(
         controller: searchController,
         onEditingComplete: () {
           //searching!();
         },
-        style: const TextStyle(color: Colors.white),
-        cursorColor: Colors.white,
+        style: const TextStyle(color: Colors.black),
+        cursorColor: Colors.black,
         autofocus: true,
         decoration: const InputDecoration(
-          focusColor: Colors.white,
+          focusColor: Colors.black12,
           focusedBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
           enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         ),
       ),
     ),
+    actions: [
+      IconButton(icon: const Icon(Icons.search), onPressed: () {}),
+      const SizedBox(
+        width: 40,
+      )
+    ],
   );
 }
