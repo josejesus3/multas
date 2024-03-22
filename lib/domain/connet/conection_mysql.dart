@@ -14,7 +14,7 @@ class ConnectionMysql {
   Future<Results> insertQuery(ListMultas multa) async {
     final MySqlConnection conn = await DatabaseConnection.connectionSettings();
     Results result = await conn.query(insertar, [
-      multa.municipio,
+      multa.municipio, 
       multa.status,
       multa.placa,
       multa.cantidad,
