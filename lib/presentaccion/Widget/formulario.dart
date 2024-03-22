@@ -136,6 +136,7 @@ class FormularioState extends ConsumerState<Formulario> {
                 fechasPagoController.clear();
                 foraneasController.clear();
               });
+              ref.read(checkBox.notifier).state = false;
             },
             icon: Icons.delete_forever,
             label: 'Cancelar',
