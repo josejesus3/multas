@@ -1,4 +1,4 @@
-import 'package:multas/domain/connet/connection_settings.dart';
+import 'package:multas/domain/conexion/connection_settings.dart';
 import 'package:multas/domain/entiti/list_multas.dart';
 import 'package:mysql1/mysql1.dart';
 
