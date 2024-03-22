@@ -1,6 +1,6 @@
 class ListMultas {
   final int municipio;
-  final int status;
+  final String status;
   final String? placa;
   final double? cantidad;
   final String? fecha;
