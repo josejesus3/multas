@@ -1,20 +1,20 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multas/domain/conexion/connection_settings.dart';
 import 'package:multas/domain/entiti/list_multas.dart';
+import 'package:multas/presentaccion/provider/read_provider.dart';
 import 'package:mysql1/mysql1.dart';
-
 
 class ConnectionMysql {
   final String insertar =
       'insert into registros (municipio,status,placa,importe,fechada,folio,folioPago,cantidad,estado,fecha,foranea) values (?,?,?,?,?,?,?,?,?,?,?)';
   final String actualizar =
       'update registros set municipio=?,status=?,placa=?,importe=?,fechada=?,folio=?,folioPago=?,cantidad=?,estado=?,fecha=?,foranea=? where placa=?';
-  final String leer =
-      'select municipio,status,fecha from registros where placa = ?';
-      
+  final String leer = 'select * from registros';
+
   Future<Results> insertQuery(ListMultas multa) async {
     final MySqlConnection conn = await DatabaseConnection.connectionSettings();
     Results result = await conn.query(insertar, [
-      multa.municipio, 
+      multa.municipio,
       multa.status,
       multa.placa,
       multa.cantidad,
@@ -48,13 +48,18 @@ class ConnectionMysql {
     return result;
   }
 
-  Future<List<ListMultas>> selectQuery(String placa) async {
+  Future<List<ListMultas>> selectQuery() async {
     List<ListMultas> nuevas = [];
     final conn = await DatabaseConnection.connectionSettings();
-    Results result = await conn.query(leer, [placa]);
+    Results result = await conn.query(
+      leer,
+    );
     for (var row in result) {
       ListMultas lista = ListMultas(
-          municipio: row[0], status: row[1], fechaPago: row[2].toString(),);
+        municipio: row[0],
+        status: row[1],
+        fechaPago: row[2].toString(),
+      );
 
       nuevas.add(lista);
     }
