@@ -155,7 +155,7 @@ class _TEXT extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 30, top: 38, right: 10),
+      padding: const EdgeInsets.only(left: 30, top: 29, right: 10),
       child: Container(
         width: 135,
         height: 40,
@@ -225,7 +225,7 @@ class _Campos extends StatelessWidget {
     );
     final sized = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.all(30),
+      padding: const EdgeInsets.all(20),
       child: SizedBox(
         width: sized.width <= 800 ? sized.width * 0.7 : sized.width * 0.2,
         child: TextField(

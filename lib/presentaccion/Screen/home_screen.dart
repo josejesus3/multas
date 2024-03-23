@@ -13,7 +13,6 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int index = ref.watch(currentIndex);
-    print(index);
     final bool searching = ref.watch(isSearching);
     TextEditingController searchController = TextEditingController();
 

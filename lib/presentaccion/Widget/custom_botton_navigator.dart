@@ -23,7 +23,7 @@ class CustomBottonNavigation extends StatelessWidget {
             icon: IconButton(
               onPressed: () {
                 ref.read(currentIndex.notifier).update((state) => 0);
-                context.push('/');
+                context.go('/');
               },
               icon: const Icon(
                 Icons.home_outlined,
@@ -34,7 +34,7 @@ class CustomBottonNavigation extends StatelessWidget {
           icon: IconButton(
             onPressed: () {
               ref.read(currentIndex.notifier).update((state) => 1);
-              context.push('/listViewMultas');
+              context.go('/listViewMultas');
             },
             icon: const Icon(Icons.list_alt_outlined),
           ),

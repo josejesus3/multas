@@ -1,7 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multas/domain/conexion/connection_settings.dart';
 import 'package:multas/domain/entiti/list_multas.dart';
-import 'package:multas/presentaccion/provider/read_provider.dart';
 import 'package:mysql1/mysql1.dart';
 
 class ConnectionMysql {
@@ -9,7 +7,7 @@ class ConnectionMysql {
       'insert into registros (municipio,status,placa,importe,fechada,folio,folioPago,cantidad,estado,fecha,foranea) values (?,?,?,?,?,?,?,?,?,?,?)';
   final String actualizar =
       'update registros set municipio=?,status=?,placa=?,importe=?,fechada=?,folio=?,folioPago=?,cantidad=?,estado=?,fecha=?,foranea=? where placa=?';
-  final String leer = 'select * from registros';
+  final String leer = 'SELECT * FROM registros';
 
   Future<Results> insertQuery(ListMultas multa) async {
     final MySqlConnection conn = await DatabaseConnection.connectionSettings();
@@ -55,13 +53,21 @@ class ConnectionMysql {
       leer,
     );
     for (var row in result) {
-      ListMultas lista = ListMultas(
-        municipio: row[0],
-        status: row[1],
-        fechaPago: row[2].toString(),
-      );
+      bool infraccion = row[9] == 1;
+      ListMultas multa = ListMultas(
+          municipio: row[1],
+          status: row[2],
+          placa: row[3],
+          cantidad: row[4],
+          fecha: row[5],
+          folio: row[6],
+          folioPago: row[7],
+          cantidadPago: row[8],
+          infraccion: infraccion,
+          fechaPago: row[10],
+          foraneas: row[11]);
 
-      nuevas.add(lista);
+      nuevas.add(multa);
     }
 
     return nuevas;

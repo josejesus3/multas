@@ -12,6 +12,8 @@ class ListViewMultas extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int index = ref.watch(currentIndex);
+    final size = MediaQuery.of(context).size;
+    final textStyle = Theme.of(context).textTheme;
 
     return Scaffold(
       bottomNavigationBar: CustomBottonNavigation(
@@ -22,7 +24,10 @@ class ListViewMultas extends ConsumerWidget {
         future: ConnectionMysql().selectQuery(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator(); // Muestra un indicador de carga mientras se espera la respuesta de la base de datos.
+            return const Center(
+                child: CircularProgressIndicator(
+              strokeWidth: 2,
+            )); // Muestra un indicador de carga mientras se espera la respuesta de la base de datos.
           } else if (snapshot.hasError) {
             print('${snapshot.error}');
             return Text('Error: ${snapshot.error}');
@@ -34,7 +39,39 @@ class ListViewMultas extends ConsumerWidget {
               itemCount: multas.length,
               itemBuilder: (context, index) {
                 final multa = multas[index];
-                return Text(multa.status);
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  child: Container(
+                    height: 65,
+                    decoration: BoxDecoration(
+                      border: Border.all(),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        multa.infraccion != true
+                            ? Icon(
+                                Icons.dangerous_outlined,
+                                color: Colors.red.shade500,
+                              )
+                            : Icon(
+                                Icons.check_circle_outline,
+                                color: Colors.green.shade500,
+                              ),
+                        Text('Placa:  ${multa.placa.toString()}',
+                            style: textStyle.titleLarge),
+                        Text('Fechada:  ${multa.fecha.toString()}',
+                            style: textStyle.titleLarge),
+                        Text('Importe:  ${multa.cantidad.toString()}',
+                            style: textStyle.titleLarge),
+                        Text('Folio Pago:  ${multa.folioPago}',
+                            style: textStyle.titleLarge),
+                      ],
+                    ),
+                  ),
+                );
               },
             );
           }
