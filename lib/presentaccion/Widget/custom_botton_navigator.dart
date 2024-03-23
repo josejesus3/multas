@@ -7,7 +7,7 @@ class CustomBottonNavigation extends StatelessWidget {
   final WidgetRef ref;
   const CustomBottonNavigation({
     super.key,
-    required this.index,
+    required this.index, 
     required this.ref,
   });
 
