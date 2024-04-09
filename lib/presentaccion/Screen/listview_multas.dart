@@ -29,7 +29,6 @@ class ListViewMultas extends ConsumerWidget {
               strokeWidth: 2,
             )); // Muestra un indicador de carga mientras se espera la respuesta de la base de datos.
           } else if (snapshot.hasError) {
-            print('${snapshot.error}');
             return Text('Error: ${snapshot.error}');
           } else {
             final List<ListMultas> multas =
@@ -68,6 +67,12 @@ class ListViewMultas extends ConsumerWidget {
                             style: textStyle.titleLarge),
                         Text('Folio Pago:  ${multa.folioPago}',
                             style: textStyle.titleLarge),
+                        IconButton(
+                            onPressed: () {
+                              ConnectionMysql()
+                                  .deleteQuery(multa, multa.placa.toString());
+                            },
+                            icon: const Icon(Icons.delete_forever_outlined))
                       ],
                     ),
                   ),
