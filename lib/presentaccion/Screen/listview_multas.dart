@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multas/domain/conexion/connection_mysql.dart';
 import 'package:multas/domain/entiti/list_multas.dart';
@@ -18,7 +17,6 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
   @override
   Widget build(BuildContext context) {
     final int index = ref.watch(currentIndex);
-    final textStyle = Theme.of(context).textTheme.bodyMedium;
 
     return Scaffold(
       bottomNavigationBar: CustomBottonNavigation(
@@ -86,18 +84,8 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                                             Icons.check_circle_outline,
                                             color: Colors.green.shade500,
                                           ),
-                                    const Spacer(),
-                                    Text(multa.placa.toString(),
-                                        style: textStyle),
-                                    const Spacer(),
-                                    Text(multa.fecha.toString(),
-                                        style: textStyle),
-                                    const Spacer(),
-                                    Text(multa.cantidad.toString(),
-                                        style: textStyle),
-                                    const Spacer(),
-                                    Text(multa.folioPago.toString(),
-                                        style: textStyle),
+                                    _Text(data: multa.placa.toString()),
+                                    _Text(data: multa.fecha.toString()),
                                     IconButton(
                                         onPressed: () {
                                           ConnectionMysql().deleteQuery(
@@ -122,6 +110,31 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                   );
           }
         },
+      ),
+    );
+  }
+}
+
+class _Text extends StatefulWidget {
+  final String data;
+  const _Text({super.key, required this.data});
+
+  @override
+  State<_Text> createState() => _TextState();
+}
+
+class _TextState extends State<_Text> {
+  @override
+  Widget build(BuildContext context) {
+    final textStyle = Theme.of(context).textTheme.bodyMedium;
+    return Container(
+      color: Colors.amber,
+      height: 50,
+      width: 100,
+      child: Text(
+        widget.data,
+        style: textStyle,
+        textAlign: TextAlign.center,
       ),
     );
   }
