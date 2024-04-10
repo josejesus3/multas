@@ -8,8 +8,7 @@ class ConnectionMysql {
   final String actualizar =
       'update registros set municipio=?,status=?,placa=?,importe=?,fechada=?,folio=?,folioPago=?,cantidad=?,estado=?,fecha=?,foranea=? where placa=?';
   final String leer = 'SELECT * FROM registros';
-  final String delete =
-      'DELETE registros set municipio=?,status=?,placa=?,importe=?,fechada=?,folio=?,folioPago=?,cantidad=?,estado=?,fecha=?,foranea=? WHERE placa=?';
+  final String delete = 'DELETE FROM registros  WHERE placa=?';
 
   Future<Results> insertQuery(ListMultas multa) async {
     final MySqlConnection conn = await DatabaseConnection.connectionSettings();
@@ -48,22 +47,9 @@ class ConnectionMysql {
     return result;
   }
 
-  Future<Results> deleteQuery(ListMultas multa, String placa) async {
+  Future<Results> deleteQuery(String placa) async {
     final conn = await DatabaseConnection.connectionSettings();
-    Results result = await conn.query(delete, [
-      multa.municipio,
-      multa.status,
-      multa.placa,
-      multa.cantidad,
-      multa.fecha,
-      multa.folio,
-      multa.folioPago,
-      multa.cantidadPago,
-      multa.infraccion,
-      multa.fecha,
-      multa.foraneas,
-      placa
-    ]);
+    Results result = await conn.query(delete, [placa]);
     return result;
   }
 

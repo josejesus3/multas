@@ -118,7 +118,6 @@ class FormularioState extends ConsumerState<Formulario> {
                     fechasPagoController.text,
                     foraneasController.text);
               });
-              print(check);
             },
             icon: Icons.add_circle_outlined,
             label: 'Agregar',
@@ -270,7 +269,6 @@ void _validacion(
       cantidadFolio.isEmpty ||
       fechasPago.isEmpty ||
       foraneas.isEmpty) {
-    print('entro');
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         duration: Duration(milliseconds: 500),
@@ -282,7 +280,6 @@ void _validacion(
       ),
     );
   } else {
-    print('entro excelente');
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         duration: Duration(milliseconds: 500),

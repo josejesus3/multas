@@ -7,37 +7,39 @@ class CustomBottonNavigation extends StatelessWidget {
   final WidgetRef ref;
   const CustomBottonNavigation({
     super.key,
-    required this.index, 
+    required this.index,
     required this.ref,
   });
 
   final int index;
+  void selectIndex(BuildContext context, int value) {
+    switch (value) {
+      case 0:
+        context.go('/');
+        break;
+      case 1:
+        context.go('/listViewMultas');
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final int index = ref.watch(currentIndex);
     return BottomNavigationBar(
       currentIndex: index,
-      items: [
+      onTap: (value) {
+        ref.read(currentIndex.notifier).state = value;
+        selectIndex(context, value);
+      },
+      items: const [
         BottomNavigationBarItem(
-            icon: IconButton(
-              onPressed: () {
-                ref.read(currentIndex.notifier).update((state) => 0);
-                context.go('/');
-              },
-              icon: const Icon(
-                Icons.home_outlined,
-              ),
+            icon: Icon(
+              Icons.home_outlined,
             ),
             label: 'Inicio'),
         BottomNavigationBarItem(
-          icon: IconButton(
-            onPressed: () {
-              ref.read(currentIndex.notifier).update((state) => 1);
-              context.go('/listViewMultas');
-            },
-            icon: const Icon(Icons.list_alt_outlined),
-          ),
+          icon: Icon(Icons.list_alt_outlined),
           label: 'Lista de Multas',
         ),
       ],
