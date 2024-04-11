@@ -73,7 +73,7 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                                 child: Row(
                                   children: [
                                     const SizedBox(
-                                      width: 35,
+                                      width: 130,
                                     ),
                                     multa.infraccion != true
                                         ? Icon(
@@ -84,8 +84,14 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                                             Icons.check_circle_outline,
                                             color: Colors.green.shade500,
                                           ),
+                                    const Spacer(),
                                     _Text(data: multa.placa.toString()),
+                                    const SizedBox(width: 185),
                                     _Text(data: multa.fecha.toString()),
+                                    const Spacer(),
+                                    _Text(data: multa.cantidad.toString()),
+                                    const Spacer(),
+                                    _Text(data: multa.folioPago.toString()),
                                     IconButton(
                                         onPressed: () {
                                           ConnectionMysql().deleteQuery(
@@ -97,7 +103,7 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                                         icon: const Icon(
                                             Icons.delete_forever_outlined)),
                                     const SizedBox(
-                                      width: 50,
+                                      width: 70,
                                     ),
                                   ],
                                 ),
@@ -127,14 +133,15 @@ class _TextState extends State<_Text> {
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
-    return Container(
-      color: Colors.amber,
+    return SizedBox(
       height: 50,
       width: 100,
-      child: Text(
-        widget.data,
-        style: textStyle,
-        textAlign: TextAlign.center,
+      child: Center(
+        child: Text(
+          widget.data,
+          style: textStyle,
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }
@@ -162,36 +169,27 @@ class _TitleWidget extends StatelessWidget {
               topLeft: Radius.circular(15), topRight: Radius.circular(15)),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const SizedBox(
-              width: 30,
-            ),
             Text(
               'Estado',
               style: textStyle.bodyMedium,
             ),
-            const Spacer(),
             Text(
               'Placa',
               style: textStyle.bodyMedium,
             ),
-            const Spacer(),
             Text(
               'Fechada',
               style: textStyle.bodyMedium,
             ),
-            const Spacer(),
             Text(
               'Importe',
               style: textStyle.bodyMedium,
             ),
-            const Spacer(),
             Text(
               'Folio de pago',
               style: textStyle.bodyMedium,
-            ),
-            const SizedBox(
-              width: 40,
             ),
           ],
         ),
