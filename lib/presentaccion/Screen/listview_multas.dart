@@ -17,6 +17,7 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
   @override
   Widget build(BuildContext context) {
     final int index = ref.watch(currentIndex);
+    final sized = MediaQuery.of(context).size;
 
     return Scaffold(
       bottomNavigationBar: CustomBottonNavigation(
@@ -72,8 +73,8 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                                 ),
                                 child: Row(
                                   children: [
-                                    const SizedBox(
-                                      width: 130,
+                                    SizedBox(
+                                      width: sized.width * 0.1,
                                     ),
                                     multa.infraccion != true
                                         ? Icon(
@@ -84,13 +85,21 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                                             Icons.check_circle_outline,
                                             color: Colors.green.shade500,
                                           ),
-                                    const Spacer(),
+                                    SizedBox(
+                                      width: sized.width * 0.13,
+                                    ),
                                     _Text(data: multa.placa.toString()),
-                                    const SizedBox(width: 185),
+                                    SizedBox(
+                                      width: sized.width * 0.13,
+                                    ),
                                     _Text(data: multa.fecha.toString()),
-                                    const Spacer(),
+                                    SizedBox(
+                                      width: sized.width * 0.13,
+                                    ),
                                     _Text(data: multa.cantidad.toString()),
-                                    const Spacer(),
+                                    SizedBox(
+                                      width: sized.width * 0.13,
+                                    ),
                                     _Text(data: multa.folioPago.toString()),
                                     IconButton(
                                         onPressed: () {
@@ -102,9 +111,6 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                                         },
                                         icon: const Icon(
                                             Icons.delete_forever_outlined)),
-                                    const SizedBox(
-                                      width: 70,
-                                    ),
                                   ],
                                 ),
                               );
