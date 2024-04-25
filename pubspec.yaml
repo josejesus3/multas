@@ -38,6 +38,7 @@ dependencies:
   go_router: ^13.2.0
   flutter_riverpod: ^2.5.1
   mysql1: ^0.20.0
+  animate_do: ^3.3.3
   
 
 dev_dependencies:
