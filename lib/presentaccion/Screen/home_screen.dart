@@ -17,6 +17,7 @@ class HomeScreen extends ConsumerWidget {
     TextEditingController searchController = TextEditingController();
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: !searching
           ? getAppBarNotSearching()
           : getAppBarSearching(searchController),

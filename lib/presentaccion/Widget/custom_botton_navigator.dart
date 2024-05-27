@@ -5,13 +5,13 @@ import 'package:multas/presentaccion/provider/read_provider.dart';
 
 class CustomBottonNavigation extends StatelessWidget {
   final WidgetRef ref;
+  final int index;
   const CustomBottonNavigation({
     super.key,
     required this.index,
     required this.ref,
   });
 
-  final int index;
   void selectIndex(BuildContext context, int value) {
     switch (value) {
       case 0:

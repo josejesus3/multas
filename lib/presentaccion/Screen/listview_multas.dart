@@ -18,6 +18,7 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
   Widget build(BuildContext context) {
     final int index = ref.watch(currentIndex);
     final sized = MediaQuery.of(context).size;
+    final textStyle = Theme.of(context).textTheme;
 
     return Scaffold(
       bottomNavigationBar: CustomBottonNavigation(
@@ -39,86 +40,65 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                 snapshot.data ?? []; // Obtiene los datos del snapshot
 
             return multas.isEmpty
-                ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('lO SIENTO NO TIENES REGISTROS'),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Icon(Icons.assignment_late_outlined)
-                      ],
-                    ),
+                ? const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('lO SIENTO NO TIENES REGISTROS'),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Icon(Icons.assignment_late_outlined)
+                    ],
                   )
-                : Container(
-                    color: const Color.fromARGB(14, 0, 0, 0),
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 50,
-                        ),
-                        const _TitleWidget(),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: multas.length,
-                            itemBuilder: (context, index) {
-                              final multa = multas[index];
-                              return Container(
-                                height: 45,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border(bottom: BorderSide()),
-                                ),
-                                child: Row(
+                : Center(
+                    child: SizedBox(
+                        width: 1000,
+                        child: ListView.builder(
+                          itemCount: multas.length,
+                          itemBuilder: (context, index) {
+                            final multa = multas[index];
+                            return Table(
+                              border: TableBorder
+                                  .all(), // Para agregar bordes a la tabla
+                              children: [
+                                // Fila de encabezado
+                                TableRow(
                                   children: [
-                                    SizedBox(
-                                      width: sized.width * 0.1,
+                                    TableCell(
+                                        child: _Text(data: multa.fechaPago)),
+                                    TableCell(
+                                      child: Text(
+                                        'Placa',
+                                        style: textStyle.bodyMedium,
+                                      ),
                                     ),
-                                    multa.infraccion != true
-                                        ? Icon(
-                                            Icons.dangerous_outlined,
-                                            color: Colors.red.shade500,
-                                          )
-                                        : Icon(
-                                            Icons.check_circle_outline,
-                                            color: Colors.green.shade500,
-                                          ),
-                                    SizedBox(
-                                      width: sized.width * 0.13,
+                                    TableCell(
+                                      child: Text(
+                                        'Fecha',
+                                        style: textStyle.bodyMedium,
+                                      ),
                                     ),
-                                    _Text(data: multa.placa.toString()),
-                                    SizedBox(
-                                      width: sized.width * 0.13,
+                                    TableCell(
+                                      child: Text(
+                                        'Importe',
+                                        style: textStyle.bodyMedium,
+                                      ),
                                     ),
-                                    _Text(data: multa.fecha.toString()),
-                                    SizedBox(
-                                      width: sized.width * 0.13,
+                                    TableCell(
+                                      child: Text(
+                                        'Folio de pago',
+                                        style: textStyle.bodyMedium,
+                                      ),
                                     ),
-                                    _Text(data: multa.cantidad.toString()),
-                                    SizedBox(
-                                      width: sized.width * 0.13,
-                                    ),
-                                    _Text(data: multa.folioPago.toString()),
-                                    IconButton(
-                                        onPressed: () {
-                                          ConnectionMysql().deleteQuery(
-                                              multa.placa.toString());
-                                          setState(() {
-                                            ConnectionMysql().selectQuery();
-                                          });
-                                        },
-                                        icon: const Icon(
-                                            Icons.delete_forever_outlined)),
                                   ],
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                                // Filas de datos obtenidos de la base de datos
+
+                                // Puedes agregar más TableRow para cada fila de datos adicional
+                              ],
+                            );
+                          },
+                        )),
                   );
           }
         },
