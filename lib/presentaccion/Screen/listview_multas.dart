@@ -40,65 +40,61 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                 snapshot.data ?? []; // Obtiene los datos del snapshot
 
             return multas.isEmpty
-                ? const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('lO SIENTO NO TIENES REGISTROS'),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Icon(Icons.assignment_late_outlined)
-                    ],
+                ? const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('lO SIENTO NO TIENES REGISTROS'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Icon(Icons.assignment_late_outlined)
+                      ],
+                    ),
                   )
-                : Center(
+                : Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 50, horizontal: 60),
                     child: SizedBox(
-                        width: 1000,
-                        child: ListView.builder(
-                          itemCount: multas.length,
-                          itemBuilder: (context, index) {
-                            final multa = multas[index];
-                            return Table(
-                              border: TableBorder
-                                  .all(), // Para agregar bordes a la tabla
-                              children: [
-                                // Fila de encabezado
-                                TableRow(
-                                  children: [
-                                    TableCell(
-                                        child: _Text(data: multa.fechaPago)),
-                                    TableCell(
-                                      child: Text(
-                                        'Placa',
-                                        style: textStyle.bodyMedium,
-                                      ),
-                                    ),
-                                    TableCell(
-                                      child: Text(
-                                        'Fecha',
-                                        style: textStyle.bodyMedium,
-                                      ),
-                                    ),
-                                    TableCell(
-                                      child: Text(
-                                        'Importe',
-                                        style: textStyle.bodyMedium,
-                                      ),
-                                    ),
-                                    TableCell(
-                                      child: Text(
-                                        'Folio de pago',
-                                        style: textStyle.bodyMedium,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                // Filas de datos obtenidos de la base de datos
+                        width: sized.width * 0.9,
+                        child: DataTable(
+                          border: TableBorder.all(),
+                          columns: const [
+                            DataColumn(label: Text('Estado')),
+                            DataColumn(label: Text('Placa')),
+                            DataColumn(label: Text('Fecha')),
+                            DataColumn(label: Text('Importe')),
+                            DataColumn(label: Text('Folio de pago')),
+                          ],
+                          rows: multas
+                              .map((data) => DataRow(cells: [
+                                    DataCell(Icon(data.infraccion == false
+                                        ? Icons.error_outline
+                                        : Icons.check_box)),
+                                    DataCell(Text(data.placa.toString())),
+                                    DataCell(Text(data.fecha.toString())),
+                                    DataCell(
+                                        Text(data.cantidadPago.toString())),
+                                    DataCell(Row(
+                                      children: [
+                                        Text(data.folioPago.toString()),
+                                        IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                ConnectionMysql().deleteQuery(
+                                                    data.placa.toString());
+                                              });
+                                            },
+                                            icon: const Icon(
+                                                Icons.delete_forever))
+                                      ],
+                                    )),
+                                  ]))
+                              .toList(),
+                        )
+                        // Fila de encabezado
 
-                                // Puedes agregar más TableRow para cada fila de datos adicional
-                              ],
-                            );
-                          },
-                        )),
+                        ),
                   );
           }
         },
