@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multas/domain/conexion/connection_mysql.dart';
 import 'package:multas/domain/entiti/list_multas.dart';
+import 'package:multas/presentaccion/Widget/app_bar_buscador.dart';
 import 'package:multas/presentaccion/Widget/custom_botton_navigator.dart';
 import 'package:multas/presentaccion/provider/read_provider.dart';
 
@@ -14,168 +15,150 @@ class ListViewMultas extends ConsumerStatefulWidget {
 }
 
 class ListViewMultasState extends ConsumerState<ListViewMultas> {
+  List<ListMultas> multas = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getMultas(); // Obtener multas al inicio
+  }
+
+  // Función para obtener todas las multas
+  void getMultas() async {
+    List<ListMultas> allMultas = await ConnectionMysql().selectQuery();
+    setState(() {
+      multas = allMultas;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final int index = ref.watch(currentIndex);
     final sized = MediaQuery.of(context).size;
-    final textStyle = Theme.of(context).textTheme;
+    final bool searching = ref.watch(isSearching);
+    TextEditingController searchController = TextEditingController();
 
     return Scaffold(
+      appBar: !searching
+          ? getAppBarNotSearching(sized.width * 0.9, () {
+              ref.read(isSearching.notifier).state = true;
+            })
+          : getAppBarSearching(searchController, () {
+              setState(() {
+                searchMultas(searchController.text, searchController.text);
+              });
+            }, () {
+              ref.read(isSearching.notifier).state = false;
+              setState(() {
+                getMultas();
+              });
+            }),
       bottomNavigationBar: CustomBottonNavigation(
         index: index,
         ref: ref,
       ),
-      body: FutureBuilder<List<ListMultas>>(
-        future: ConnectionMysql().selectQuery(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-                child: CircularProgressIndicator(
-              strokeWidth: 2,
-            )); // Muestra un indicador de carga mientras se espera la respuesta de la base de datos.
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            final List<ListMultas> multas =
-                snapshot.data ?? []; // Obtiene los datos del snapshot
-
-            return multas.isEmpty
-                ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('lO SIENTO NO TIENES REGISTROS'),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Icon(Icons.assignment_late_outlined)
-                      ],
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 50, horizontal: 60),
-                    child: SizedBox(
-                        width: sized.width * 0.9,
-                        child: DataTable(
-                          border: TableBorder.all(),
-                          columns: const [
-                            DataColumn(label: Text('Estado')),
-                            DataColumn(label: Text('Placa')),
-                            DataColumn(label: Text('Fecha')),
-                            DataColumn(label: Text('Importe')),
-                            DataColumn(label: Text('Folio de pago')),
+      body: multas.isEmpty
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('LO SIENTO, NO HAY REGISTROS'),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Icon(Icons.assignment_late_outlined)
+                ],
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 60),
+              child: SizedBox(
+                width: sized.width * 0.9,
+                child: DataTable(
+                  border: TableBorder.all(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.black12,
+                  ),
+                  columns: const [
+                    DataColumn(label: Text('Estado')),
+                    DataColumn(label: Text('Placa')),
+                    DataColumn(label: Text('Fecha')),
+                    DataColumn(label: Text('Importe')),
+                    DataColumn(label: Text('Folio de pago')),
+                    DataColumn(label: Text('Acciones')),
+                  ],
+                  rows: multas
+                      .map(
+                        (data) => DataRow(
+                          cells: [
+                            DataCell(
+                              Row(
+                                children: [
+                                  data.infraccion == false
+                                      ? Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.red.shade200,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          width: 70,
+                                          child: const Text(
+                                            'Sin pagar',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        )
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.green.shade100,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          width: 70,
+                                          child: const Text(
+                                            'Pagada',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                ],
+                              ),
+                            ),
+                            DataCell(Text(data.placa.toString())),
+                            DataCell(Text(data.fecha.toString())),
+                            DataCell(Text(data.cantidadPago.toString())),
+                            DataCell(Text(data.folioPago.toString())),
+                            DataCell(
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    deleteMulta(data.placa.toString());
+                                  });
+                                },
+                                icon: const Icon(Icons.delete_forever),
+                              ),
+                            ),
                           ],
-                          rows: multas
-                              .map((data) => DataRow(cells: [
-                                    DataCell(Icon(data.infraccion == false
-                                        ? Icons.error_outline
-                                        : Icons.check_box)),
-                                    DataCell(Text(data.placa.toString())),
-                                    DataCell(Text(data.fecha.toString())),
-                                    DataCell(
-                                        Text(data.cantidadPago.toString())),
-                                    DataCell(Row(
-                                      children: [
-                                        Text(data.folioPago.toString()),
-                                        IconButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                ConnectionMysql().deleteQuery(
-                                                    data.placa.toString());
-                                              });
-                                            },
-                                            icon: const Icon(
-                                                Icons.delete_forever))
-                                      ],
-                                    )),
-                                  ]))
-                              .toList(),
-                        )
-                        // Fila de encabezado
-
                         ),
-                  );
-          }
-        },
-      ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ),
     );
   }
-}
 
-class _Text extends StatefulWidget {
-  final String data;
-  const _Text({super.key, required this.data});
-
-  @override
-  State<_Text> createState() => _TextState();
-}
-
-class _TextState extends State<_Text> {
-  @override
-  Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme.bodyMedium;
-    return SizedBox(
-      height: 50,
-      width: 100,
-      child: Center(
-        child: Text(
-          widget.data,
-          style: textStyle,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
+  // Función para buscar multas por placa
+  void searchMultas(String placa, fecha) async {
+    List<ListMultas> searchedMultas =
+        await ConnectionMysql().selectQueryBusqueda(placa, fecha);
+    setState(() {
+      multas = searchedMultas;
+    });
   }
-}
 
-class _TitleWidget extends StatelessWidget {
-  const _TitleWidget({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme;
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Container(
-        height: 50,
-        padding: const EdgeInsets.only(bottom: 10),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            bottom: BorderSide(),
-          ),
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text(
-              'Estado',
-              style: textStyle.bodyMedium,
-            ),
-            Text(
-              'Placa',
-              style: textStyle.bodyMedium,
-            ),
-            Text(
-              'Fechada',
-              style: textStyle.bodyMedium,
-            ),
-            Text(
-              'Importe',
-              style: textStyle.bodyMedium,
-            ),
-            Text(
-              'Folio de pago',
-              style: textStyle.bodyMedium,
-            ),
-          ],
-        ),
-      ),
-    );
+  // Función para eliminar una multa
+  void deleteMulta(String placa) async {
+    await ConnectionMysql().deleteQuery(placa);
+    // Restaurar todas las multas después de eliminar
+    getMultas();
   }
 }

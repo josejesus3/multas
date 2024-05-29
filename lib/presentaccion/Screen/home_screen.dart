@@ -13,14 +13,9 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int index = ref.watch(currentIndex);
-    final bool searching = ref.watch(isSearching);
-    TextEditingController searchController = TextEditingController();
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: !searching
-          ? getAppBarNotSearching()
-          : getAppBarSearching(searchController),
       bottomNavigationBar: CustomBottonNavigation(index: index, ref: ref),
       body: const SingleChildScrollView(child: Formulario()),
     );

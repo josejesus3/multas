@@ -2,9 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multas/presentaccion/provider/read_provider.dart';
 
-AppBar getAppBarNotSearching() {
+AppBar getAppBarNotSearching(double sized, GestureTapCallback? onTap) {
   return AppBar(
-    title: const Text('Multas'),
+    title: InkWell(
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      onTap: onTap,
+      child: Container(
+          width: sized,
+          decoration: const BoxDecoration(
+              border: BorderDirectional(bottom: BorderSide(width: 0.2))),
+          padding: const EdgeInsets.only(
+            bottom: 10,
+          ),
+          child: const Text('Multas')),
+    ),
     actions: [
       Consumer(
         builder: (BuildContext context, WidgetRef ref, Widget? child) {
@@ -16,22 +28,19 @@ AppBar getAppBarNotSearching() {
         },
       ),
       const SizedBox(
-        width: 40,
+        width: 80,
       )
     ],
   );
 }
 
-AppBar getAppBarSearching(TextEditingController searchController) {
+AppBar getAppBarSearching(TextEditingController searchController,
+    VoidCallback onEditingComplete, VoidCallback? onPressed) {
   return AppBar(
     automaticallyImplyLeading: false,
     leading: Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? child) {
-        return IconButton(
-            icon: const Icon(Icons.clear),
-            onPressed: () {
-              ref.read(isSearching.notifier).state = false;
-            });
+        return IconButton(icon: const Icon(Icons.clear), onPressed: onPressed);
       },
     ),
     title: Padding(
@@ -40,9 +49,7 @@ AppBar getAppBarSearching(TextEditingController searchController) {
       ),
       child: TextField(
         controller: searchController,
-        onEditingComplete: () {
-          //searching!();
-        },
+        onEditingComplete: onEditingComplete,
         style: const TextStyle(color: Colors.black),
         cursorColor: Colors.black,
         autofocus: true,
