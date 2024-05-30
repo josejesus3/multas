@@ -73,7 +73,7 @@ class ConnectionMysql {
           infraccion: infraccion,
           fechaPago: row[10],
           foraneas: row[11]);
-      print(multa.infraccion);
+
       nuevas.add(multa);
     }
 
