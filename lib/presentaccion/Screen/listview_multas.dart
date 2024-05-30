@@ -133,7 +133,10 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                                     deleteMulta(data.placa.toString());
                                   });
                                 },
-                                icon: const Icon(Icons.delete_forever),
+                                icon: Icon(
+                                  Icons.delete_forever,
+                                  color: Colors.red.shade300,
+                                ),
                               ),
                             ),
                           ],
