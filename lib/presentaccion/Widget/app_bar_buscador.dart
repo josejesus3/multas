@@ -8,14 +8,17 @@ AppBar getAppBarNotSearching(double sized, GestureTapCallback? onTap) {
       focusColor: Colors.transparent,
       hoverColor: Colors.transparent,
       onTap: onTap,
-      child: Container(
-          width: sized,
-          decoration: const BoxDecoration(
-              border: BorderDirectional(bottom: BorderSide(width: 0.2))),
-          padding: const EdgeInsets.only(
-            bottom: 10,
-          ),
-          child: const Text('Multas')),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 40),
+        child: Container(
+            width: sized,
+            decoration: const BoxDecoration(
+                border: BorderDirectional(bottom: BorderSide(width: 0.2))),
+            padding: const EdgeInsets.only(
+              bottom: 10,
+            ),
+            child: const Text('Multas')),
+      ),
     ),
     actions: [
       Consumer(
@@ -28,7 +31,7 @@ AppBar getAppBarNotSearching(double sized, GestureTapCallback? onTap) {
         },
       ),
       const SizedBox(
-        width: 80,
+        width: 60,
       )
     ],
   );
@@ -55,10 +58,10 @@ AppBar getAppBarSearching(TextEditingController searchController,
         autofocus: true,
         decoration: const InputDecoration(
           focusColor: Colors.black12,
-          focusedBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.black26)),
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.black12)),
         ),
       ),
     ),

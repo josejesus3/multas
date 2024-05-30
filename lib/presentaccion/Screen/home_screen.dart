@@ -13,8 +13,38 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int index = ref.watch(currentIndex);
-
+    final textStyle = Theme.of(context).textTheme;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Row(
+          children: [
+            const SizedBox(
+              width: 20,
+            ),
+            Text(
+              'Multas',
+              style: textStyle.titleLarge,
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            Text(
+              'Municipio: 72',
+              style: textStyle.bodyLarge,
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            Text(
+              'Status: A',
+              style: textStyle.bodyLarge,
+            ),
+          ],
+        ),
+        bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(10), child: Divider()),
+      ),
       backgroundColor: Colors.white,
       bottomNavigationBar: CustomBottonNavigation(index: index, ref: ref),
       body: const SingleChildScrollView(child: Formulario()),

@@ -35,14 +35,6 @@ class FormularioState extends ConsumerState<Formulario> {
       padding: const EdgeInsets.all(20),
       child: Wrap(
         children: [
-          _TEXT(
-            text: 'Municipio: ${municipio.toString()}',
-            icon: Icons.house_outlined,
-          ),
-          _TEXT(
-            text: 'Status: $status',
-            icon: Icons.check_circle_outline,
-          ),
           _Campos(
             textController: placaController,
             label: 'Placa',
@@ -141,37 +133,6 @@ class FormularioState extends ConsumerState<Formulario> {
             label: 'Cancelar',
           )
         ],
-      ),
-    );
-  }
-}
-
-class _TEXT extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  const _TEXT({required this.text, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 30, top: 29, right: 10),
-      child: Container(
-        width: 135,
-        height: 40,
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: Color.fromARGB(62, 0, 0, 0), width: 1.8),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(icon),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(text),
-          ],
-        ),
       ),
     );
   }
