@@ -39,112 +39,128 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
     TextEditingController searchController = TextEditingController();
 
     return Scaffold(
-      appBar: !searching
-          ? getAppBarNotSearching(sized.width * 0.9, () {
-              ref.read(isSearching.notifier).state = true;
-            })
-          : getAppBarSearching(searchController, () {
-              setState(() {
-                searchMultas(searchController.text, searchController.text);
-              });
-            }, () {
-              ref.read(isSearching.notifier).state = false;
-              setState(() {
-                getMultas();
-              });
-            }),
       bottomNavigationBar: CustomBottonNavigation(
         index: index,
         ref: ref,
       ),
       body: multas.isEmpty
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('LO SIENTO, NO HAY REGISTROS'),
-                  SizedBox(
+                  getAppBarSearching(searchController, () {
+                    setState(() {
+                      searchMultas(
+                          searchController.text, searchController.text);
+                    });
+                  }, () {
+                    ref.read(isSearching.notifier).state = false;
+                    setState(() {
+                      getMultas();
+                    });
+                  }),
+                  const Text('LO SIENTO, NO HAY REGISTROS'),
+                  const SizedBox(
                     height: 10,
                   ),
-                  Icon(Icons.assignment_late_outlined)
+                  const Icon(Icons.assignment_late_outlined)
                 ],
               ),
             )
-          : Padding(
-              padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 60),
-              child: SizedBox(
-                width: sized.width * 0.9,
-                child: DataTable(
-                  border: TableBorder.all(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.black12,
-                  ),
-                  columns: const [
-                    DataColumn(label: Text('Estado')),
-                    DataColumn(label: Text('Placa')),
-                    DataColumn(label: Text('Fecha')),
-                    DataColumn(label: Text('Importe')),
-                    DataColumn(label: Text('Folio de pago')),
-                    DataColumn(label: Text('Acciones')),
-                  ],
-                  rows: multas
-                      .map(
-                        (data) => DataRow(
-                          cells: [
-                            DataCell(
-                              Row(
-                                children: [
-                                  data.infraccion == false
-                                      ? Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.red.shade200,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          width: 70,
-                                          child: const Text(
-                                            'Sin pagar',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        )
-                                      : Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.green.shade100,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          width: 70,
-                                          child: const Text(
-                                            'Pagada',
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                ],
-                              ),
-                            ),
-                            DataCell(Text(data.placa.toString())),
-                            DataCell(Text(data.fecha.toString())),
-                            DataCell(Text(data.cantidadPago.toString())),
-                            DataCell(Text(data.folioPago.toString())),
-                            DataCell(
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    deleteMulta(data.placa.toString());
-                                  });
-                                },
-                                icon: Icon(
-                                  Icons.delete_forever,
-                                  color: Colors.red.shade300,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                      .toList(),
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const SizedBox(
+                  height: 30,
                 ),
-              ),
+                getAppBarSearching(searchController, () {
+                  setState(() {
+                    searchMultas(searchController.text, searchController.text);
+                  });
+                }, () {
+                  ref.read(isSearching.notifier).state = false;
+                  setState(() {
+                    getMultas();
+                  });
+                }),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 60),
+                  child: SizedBox(
+                    width: sized.width * 0.9,
+                    child: DataTable(
+                      border: TableBorder.all(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.black12,
+                      ),
+                      columns: const [
+                        DataColumn(label: Text('Estado')),
+                        DataColumn(label: Text('Placa')),
+                        DataColumn(label: Text('Fecha')),
+                        DataColumn(label: Text('Importe')),
+                        DataColumn(label: Text('Folio de pago')),
+                        DataColumn(label: Text('Acciones')),
+                      ],
+                      rows: multas
+                          .map(
+                            (data) => DataRow(
+                              cells: [
+                                DataCell(
+                                  Row(
+                                    children: [
+                                      data.infraccion == false
+                                          ? Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.red.shade200,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              width: 70,
+                                              child: const Text(
+                                                'Sin pagar',
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            )
+                                          : Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.green.shade100,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              width: 70,
+                                              child: const Text(
+                                                'Pagada',
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                    ],
+                                  ),
+                                ),
+                                DataCell(Text(data.placa.toString())),
+                                DataCell(Text(data.fecha.toString())),
+                                DataCell(Text(data.cantidadPago.toString())),
+                                DataCell(Text(data.folioPago.toString())),
+                                DataCell(
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        deleteMulta(data.placa.toString());
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Icons.delete_forever,
+                                      color: Colors.red.shade300,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ),
+              ],
             ),
     );
   }
