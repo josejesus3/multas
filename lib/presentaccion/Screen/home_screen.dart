@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:multas/presentaccion/Widget/app_bar_buscador.dart';
 import 'package:multas/presentaccion/Widget/custom_botton_navigator.dart';
 import 'package:multas/presentaccion/Widget/formulario.dart';
 
@@ -13,6 +14,8 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final int index = ref.watch(currentIndex);
     final textStyle = Theme.of(context).textTheme;
+
+    TextEditingController searchController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -39,6 +42,8 @@ class HomeScreen extends ConsumerWidget {
               'Status: A',
               style: textStyle.bodyLarge,
             ),
+            Spacer(),
+            getAppBarSearching(searchController, () {}, () {}),
           ],
         ),
         bottom: const PreferredSize(

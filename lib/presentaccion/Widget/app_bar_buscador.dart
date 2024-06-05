@@ -10,14 +10,15 @@ Widget getAppBarSearching(TextEditingController searchController,
     padding: const EdgeInsets.only(right: 60),
     child: SizedBox(
       width: 350,
-      height: 45,
+      height: 40,
       child: TextField(
         controller: searchController,
         onEditingComplete: onEditingComplete,
-        style: const TextStyle(color: Colors.black),
+        style: const TextStyle(color: Colors.black, fontSize: 12),
         cursorColor: Colors.black,
         autofocus: true,
         decoration: InputDecoration(
+          hintText: 'Ingresa Placa o Fecha',
           icon: Consumer(
             builder: (BuildContext context, WidgetRef ref, Widget? child) {
               return IconButton(

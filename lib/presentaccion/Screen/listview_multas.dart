@@ -35,7 +35,6 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
   Widget build(BuildContext context) {
     final int index = ref.watch(currentIndex);
     final sized = MediaQuery.of(context).size;
-    final bool searching = ref.watch(isSearching);
     TextEditingController searchController = TextEditingController();
 
     return Scaffold(
