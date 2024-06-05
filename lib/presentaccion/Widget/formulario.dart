@@ -128,7 +128,40 @@ class FormularioState extends ConsumerState<Formulario> {
             },
             icon: Icons.delete_forever,
             label: 'Cancelar',
-          )
+          ),
+          _ButtonAction(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  duration: Duration(milliseconds: 500),
+                  backgroundColor: Colors.black12,
+                  content: ListTile(
+                    title: Text('Excelente'),
+                    subtitle: Text('Todo bien'),
+                  ),
+                ),
+              );
+              ListMultas multa = ListMultas(
+                municipio: municipio,
+                status: status,
+                placa: widget.placaController.text,
+                cantidad: double.parse(
+                  widget.cantidadController.text,
+                ),
+                fecha: widget.fechaController.text,
+                folio: int.parse(widget.folioController.text),
+                folioPago: widget.folioPagoController.text,
+                cantidadPago: double.parse(widget.cantidadFolioController.text),
+                infraccion: check,
+                fechaPago: widget.fechasPagoController.text,
+                foraneas: widget.foraneasController.text,
+              );
+
+              ConnectionMysql().updateQuery(multa, widget.placaController.text);
+            },
+            icon: Icons.add_circle_outlined,
+            label: 'Modificar',
+          ),
         ],
       ),
     );

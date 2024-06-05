@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multas/domain/conexion/connection_mysql.dart';
 import 'package:multas/domain/entiti/list_multas.dart';
@@ -11,7 +10,7 @@ import 'package:multas/presentaccion/provider/read_provider.dart';
 class HomeScreen extends ConsumerStatefulWidget {
   static const String name = 'HomeScreen';
 
-  const HomeScreen({Key? key});
+  const HomeScreen({super.key});
 
   @override
   HomeScreenState createState() => HomeScreenState();
@@ -33,49 +32,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final int index = ref.watch(currentIndex);
     final textStyle = Theme.of(context).textTheme;
-    bool check = ref.watch(checkBox);
     TextEditingController searchController = TextEditingController();
-
-    void searchMultas(String placa, String fecha) async {
-      List<ListMultas> searchedMultas =
-          await ConnectionMysql().selectQueryBusqueda(placa, fecha);
-      if (searchedMultas.isNotEmpty) {
-        // Mostrar los datos encontrados en los TextField
-        setState(() {
-          placaController.text = searchedMultas[0].placa!;
-          cantidadController.text = searchedMultas[0].cantidadPago.toString();
-          fechaController.text = searchedMultas[0].fecha!;
-          folioController.text = searchedMultas[0].folio.toString();
-          folioPagoController.text = searchedMultas[0].folioPago!;
-          cantidadFolioController.text =
-              searchedMultas[0].cantidadPago.toString();
-          check = searchedMultas[0].infraccion!;
-          fechasPagoController.text = searchedMultas[0].fechaPago;
-          foraneasController.text = searchedMultas[0].foraneas!;
-        });
-      } else {
-        // Si no se encontraron datos, puedes mostrar un mensaje o limpiar los campos
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            duration: Duration(milliseconds: 500),
-            backgroundColor: Colors.black12,
-            content: ListTile(
-              title: Text('No se encontraron multas'),
-            ),
-          ),
-        );
-        // Limpiar los TextField
-        setState(() {
-          placaController.clear();
-          cantidadController.clear();
-          fechaController.clear();
-          folioController.clear();
-          folioPagoController.clear();
-          cantidadFolioController.clear();
-          // Limpia los demás campos según sea necesario
-        });
-      }
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -107,7 +64,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             getAppBarSearching(searchController, () {
               setState(() {
                 searchMultas(searchController.text, searchController.text);
-                ref.read(checkBox.notifier).update((state) => !state);
               });
             }, () {}),
           ],
@@ -132,5 +88,40 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void searchMultas(String placa, String fecha) async {
+    List<ListMultas> searchedMultas =
+        await ConnectionMysql().selectQueryBusqueda(placa, fecha);
+    if (searchedMultas.isNotEmpty) {
+      // Mostrar los datos encontrados en los TextField
+      setState(() {
+        placaController.text = searchedMultas[0].placa!;
+        cantidadController.text = searchedMultas[0].cantidadPago.toString();
+        fechaController.text = searchedMultas[0].fecha!;
+        folioController.text = searchedMultas[0].folio.toString();
+        folioPagoController.text = searchedMultas[0].folioPago!;
+        cantidadFolioController.text =
+            searchedMultas[0].cantidadPago.toString();
+        check = searchedMultas[0].infraccion!;
+        fechasPagoController.text = searchedMultas[0].fechaPago;
+        foraneasController.text = searchedMultas[0].foraneas!;
+      });
+
+      // Actualizar el estado del Checkbox
+      ref.read(checkBox.notifier).state = check;
+    } else {
+      // Si no se encontraron datos, puedes mostrar un mensaje o limpiar los campos
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(milliseconds: 500),
+          backgroundColor: Colors.black12,
+          content: ListTile(
+            title: Text('No se encontraron multas'),
+          ),
+        ),
+      );
+      // Limpiar los TextField
+    }
   }
 }
