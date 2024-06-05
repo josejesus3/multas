@@ -12,7 +12,6 @@ class Formulario extends ConsumerStatefulWidget {
   final TextEditingController folioController;
   final TextEditingController folioPagoController;
   final TextEditingController cantidadFolioController;
-  final TextEditingController insfraccionController;
   final TextEditingController fechasPagoController;
   final TextEditingController foraneasController;
 
@@ -23,11 +22,10 @@ class Formulario extends ConsumerStatefulWidget {
     required this.folioController,
     required this.folioPagoController,
     required this.cantidadFolioController,
-    required this.insfraccionController,
     required this.fechasPagoController,
     required this.foraneasController,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   FormularioState createState() => FormularioState();
@@ -143,7 +141,6 @@ class FormularioState extends ConsumerState<Formulario> {
     widget.folioController.clear();
     widget.folioPagoController.clear();
     widget.cantidadFolioController.clear();
-    widget.insfraccionController.clear();
     widget.fechasPagoController.clear();
     widget.foraneasController.clear();
     ref.read(checkBox.notifier).state = false;

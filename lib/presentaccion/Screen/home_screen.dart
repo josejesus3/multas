@@ -24,14 +24,16 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   TextEditingController folioController = TextEditingController();
   TextEditingController folioPagoController = TextEditingController();
   TextEditingController cantidadFolioController = TextEditingController();
-  TextEditingController insfraccionController = TextEditingController();
+
   TextEditingController fechasPagoController = TextEditingController();
   TextEditingController foraneasController = TextEditingController();
+  bool check = false;
 
   @override
   Widget build(BuildContext context) {
     final int index = ref.watch(currentIndex);
     final textStyle = Theme.of(context).textTheme;
+    bool check = ref.watch(checkBox);
     TextEditingController searchController = TextEditingController();
 
     void searchMultas(String placa, String fecha) async {
@@ -47,7 +49,9 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           folioPagoController.text = searchedMultas[0].folioPago!;
           cantidadFolioController.text =
               searchedMultas[0].cantidadPago.toString();
-          // Ajusta los demás campos según sea necesario
+          check = searchedMultas[0].infraccion!;
+          fechasPagoController.text = searchedMultas[0].fechaPago;
+          foraneasController.text = searchedMultas[0].foraneas!;
         });
       } else {
         // Si no se encontraron datos, puedes mostrar un mensaje o limpiar los campos
@@ -103,6 +107,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             getAppBarSearching(searchController, () {
               setState(() {
                 searchMultas(searchController.text, searchController.text);
+                ref.read(checkBox.notifier).update((state) => !state);
               });
             }, () {}),
           ],
@@ -122,7 +127,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           folioController: folioController,
           folioPagoController: folioPagoController,
           cantidadFolioController: cantidadFolioController,
-          insfraccionController: insfraccionController,
           fechasPagoController: fechasPagoController,
           foraneasController: foraneasController,
         ),
