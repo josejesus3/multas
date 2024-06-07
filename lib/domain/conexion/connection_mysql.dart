@@ -56,7 +56,7 @@ class ConnectionMysql {
   }
 
   Future<List<ListMultas>> selectQueryBusqueda(
-      String placa, fecha, cantidad) async {
+      {required String placa, fecha, String? cantidad}) async {
     List<ListMultas> nuevas = [];
     final conn = await DatabaseConnection.connectionSettings();
     Results result = await conn.query(buscar, [placa, fecha, cantidad]);

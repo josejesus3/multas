@@ -248,8 +248,8 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
 
   // Función para buscar multas por placa
   void searchMultas(String placa, fecha, cantidad) async {
-    List<ListMultas> searchedMultas =
-        await ConnectionMysql().selectQueryBusqueda(placa, fecha, cantidad);
+    List<ListMultas> searchedMultas = await ConnectionMysql()
+        .selectQueryBusqueda(placa: placa, fecha: fecha, cantidad: placa);
     setState(() {
       multas = searchedMultas;
     });
