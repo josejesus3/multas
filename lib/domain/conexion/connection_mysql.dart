@@ -9,7 +9,7 @@ class ConnectionMysql {
       'update registros set municipio=?,status=?,placa=?,importe=?,fechada=?,folio=?,folioPago=?,cantidad=?,estado=?,fecha=?,foranea=? where placa=?';
   final String leer = 'SELECT * FROM registros';
   final String buscar =
-      'SELECT `id`, `municipio`, `status`, `placa`, `importe`, `fechada`, `folio`, `folioPago`, `cantidad`, `estado`, `fecha`, `foranea` FROM `registros` WHERE placa = ? OR fecha =?';
+      'SELECT `id`, `municipio`, `status`, `placa`, `importe`, `fechada`, `folio`, `folioPago`, `cantidad`, `estado`, `fecha`, `foranea` FROM `registros` WHERE placa = ? OR fecha =? OR importe =?';
   final String delete = 'DELETE FROM registros  WHERE placa=?';
 
   Future<Results> insertQuery(ListMultas multa) async {
@@ -55,10 +55,11 @@ class ConnectionMysql {
     return result;
   }
 
-  Future<List<ListMultas>> selectQueryBusqueda(String placa, fecha) async {
+  Future<List<ListMultas>> selectQueryBusqueda(
+      String placa, fecha, cantidad) async {
     List<ListMultas> nuevas = [];
     final conn = await DatabaseConnection.connectionSettings();
-    Results result = await conn.query(buscar, [placa, fecha]);
+    Results result = await conn.query(buscar, [placa, fecha, cantidad]);
     for (var row in result) {
       bool infraccion = row[9] == 1;
       ListMultas multa = ListMultas(

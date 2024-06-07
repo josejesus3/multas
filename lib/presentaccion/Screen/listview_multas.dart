@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multas/domain/conexion/connection_mysql.dart';
 import 'package:multas/domain/entiti/list_multas.dart';
+import 'package:multas/domain/entiti/services/excel_exporter.dart';
 import 'package:multas/presentaccion/Widget/app_bar_buscador.dart';
 import 'package:multas/presentaccion/Widget/custom_botton_navigator.dart';
 import 'package:multas/presentaccion/provider/read_provider.dart';
@@ -31,6 +32,49 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
     });
   }
 
+  void exportToExcel() async {
+    // Obtener todos los datos de la base de datos
+    List<ListMultas> multas = await ConnectionMysql().selectQuery();
+
+    // Preparar los datos para exportar
+    List<dynamic> exportData = [];
+    exportData.add([
+      'Estado',
+      'Municipio',
+      'Status',
+      'Placa',
+      'Cantidad',
+      'Fecha',
+      'Folio',
+      'Folio de Pago',
+      'Cantidad de Pago',
+      'Infracción',
+      'Fecha',
+      'Foráneas',
+    ]);
+    for (var multa in multas) {
+      exportData.add([
+        multa.infraccion! ? 'Pagada' : 'Sin pagar',
+        multa.municipio,
+        multa.status,
+        multa.placa.toString(),
+        multa.cantidad!,
+        multa.fecha.toString(),
+        multa.folio.toString(),
+        multa.folioPago.toString(),
+        multa.cantidadPago!,
+        multa.infraccion!,
+        multa.fecha.toString(),
+        multa.foraneas!,
+      ]);
+    }
+
+    // Exportar a Excel
+    ExcelExporter.export(exportData);
+
+    // Mostrar un mensaje de éxito
+  }
+
   @override
   Widget build(BuildContext context) {
     final int index = ref.watch(currentIndex);
@@ -49,8 +93,8 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                 children: [
                   getAppBarSearching(searchController, () {
                     setState(() {
-                      searchMultas(
-                          searchController.text, searchController.text);
+                      searchMultas(searchController.text, searchController.text,
+                          double.parse(searchController.text));
                     });
                   }, () {
                     ref.read(isSearching.notifier).state = false;
@@ -74,7 +118,8 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                 ),
                 getAppBarSearching(searchController, () {
                   setState(() {
-                    searchMultas(searchController.text, searchController.text);
+                    searchMultas(searchController.text, searchController.text,
+                        searchController.text);
                   });
                 }, () {
                   ref.read(isSearching.notifier).state = false;
@@ -98,6 +143,7 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                         DataColumn(label: Text('Fecha')),
                         DataColumn(label: Text('Importe')),
                         DataColumn(label: Text('Folio de pago')),
+                        DataColumn(label: Text('Cantidad')),
                         DataColumn(label: Text('Acciones')),
                       ],
                       rows: multas
@@ -139,6 +185,7 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                                 DataCell(Text(data.fecha.toString())),
                                 DataCell(Text(data.cantidadPago.toString())),
                                 DataCell(Text(data.folioPago.toString())),
+                                DataCell(Text(data.cantidad.toString())),
                                 DataCell(
                                   IconButton(
                                     onPressed: () {
@@ -161,13 +208,21 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
                 ),
               ],
             ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green.shade400,
+        onPressed: exportToExcel,
+        child: const Icon(
+          Icons.file_download,
+          color: Colors.white,
+        ),
+      ),
     );
   }
 
   // Función para buscar multas por placa
-  void searchMultas(String placa, fecha) async {
+  void searchMultas(String placa, fecha, cantidad) async {
     List<ListMultas> searchedMultas =
-        await ConnectionMysql().selectQueryBusqueda(placa, fecha);
+        await ConnectionMysql().selectQueryBusqueda(placa, fecha, cantidad);
     setState(() {
       multas = searchedMultas;
     });

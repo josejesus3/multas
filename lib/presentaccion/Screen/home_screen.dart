@@ -63,7 +63,8 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             const Spacer(),
             getAppBarSearching(searchController, () {
               setState(() {
-                searchMultas(searchController.text, searchController.text);
+                searchMultas(searchController.text, searchController.text,
+                    searchController.text);
               });
             }, () {}),
           ],
@@ -90,9 +91,9 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  void searchMultas(String placa, String fecha) async {
+  void searchMultas(String placa, String fecha, cantidad) async {
     List<ListMultas> searchedMultas =
-        await ConnectionMysql().selectQueryBusqueda(placa, fecha);
+        await ConnectionMysql().selectQueryBusqueda(placa, fecha, cantidad);
     if (searchedMultas.isNotEmpty) {
       // Mostrar los datos encontrados en los TextField
       setState(() {
