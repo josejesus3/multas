@@ -1,11 +1,14 @@
+import 'dart:io';
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multas/domain/conexion/connection_mysql.dart';
 import 'package:multas/domain/entiti/list_multas.dart';
-import 'package:multas/domain/entiti/services/excel_exporter.dart';
 import 'package:multas/presentaccion/Widget/app_bar_buscador.dart';
 import 'package:multas/presentaccion/Widget/custom_botton_navigator.dart';
 import 'package:multas/presentaccion/provider/read_provider.dart';
+import 'package:path/path.dart';
+import 'package:intl/intl.dart';
 
 class ListViewMultas extends ConsumerStatefulWidget {
   static String name = 'ListViewMultas';
@@ -36,41 +39,65 @@ class ListViewMultasState extends ConsumerState<ListViewMultas> {
     // Obtener todos los datos de la base de datos
     List<ListMultas> multas = await ConnectionMysql().selectQuery();
 
-    // Preparar los datos para exportar
-    List<dynamic> exportData = [];
-    exportData.add([
-      'Estado',
-      'Municipio',
-      'Status',
-      'Placa',
-      'Cantidad',
-      'Fecha',
-      'Folio',
-      'Folio de Pago',
-      'Cantidad de Pago',
-      'Infracción',
-      'Fecha',
-      'Foráneas',
-    ]);
-    for (var multa in multas) {
-      exportData.add([
-        multa.infraccion! ? 'Pagada' : 'Sin pagar',
-        multa.municipio,
-        multa.status,
-        multa.placa.toString(),
-        multa.cantidad!,
-        multa.fecha.toString(),
-        multa.folio.toString(),
-        multa.folioPago.toString(),
-        multa.cantidadPago!,
-        multa.infraccion!,
-        multa.fecha.toString(),
-        multa.foraneas!,
-      ]);
-    }
+    // Crear un nuevo libro Excel
+    var excel = Excel.createExcel();
+    var sheet = excel['Multas'];
 
-    // Exportar a Excel
-    ExcelExporter.export(exportData);
+    // Añadir encabezados
+    sheet.appendRow([
+      const TextCellValue('Estado'),
+      const TextCellValue('Municipio'),
+      const TextCellValue('Status'),
+      const TextCellValue('Placa'),
+      const TextCellValue('Cantidad'),
+      const TextCellValue('Fecha'),
+      const TextCellValue('Folio'),
+      const TextCellValue('Folio de Pago'),
+      const TextCellValue('Cantidad de Pago'),
+      const TextCellValue('Infracción'),
+      const TextCellValue('Fecha'),
+      const TextCellValue('Foráneas'),
+    ]);
+
+    // Añadir filas de datos
+    multas.forEach((multa) {
+      sheet.appendRow([
+        multa.infraccion!
+            ? const TextCellValue('Pagada')
+            : const TextCellValue('Sin pagar'),
+        IntCellValue(multa.municipio),
+        TextCellValue(multa.status),
+        TextCellValue(multa.placa.toString()),
+        DoubleCellValue(multa
+            .cantidad!), // No es necesario llamar a toString() si el tipo es int
+        TextCellValue(multa.fecha.toString()),
+        TextCellValue(multa.folio.toString()),
+        TextCellValue(multa.folioPago.toString()),
+        DoubleCellValue(multa
+            .cantidadPago!), // No es necesario llamar a toString() si el tipo es int
+        BoolCellValue(multa
+            .infraccion!), // No es necesario llamar a toString() si el tipo es bool
+        TextCellValue(multa.fecha.toString()),
+        TextCellValue(multa.foraneas!),
+      ]);
+    });
+
+    // Guardar el archivo Excel en el almacenamiento externo
+    DateTime now = DateTime.now();
+
+    // Formatear la fecha actual en el formato deseado (por ejemplo, YYYY-MM)
+    final String formattedDate = DateFormat('yyyy-MM').format(now);
+
+    // Crear el nombre del archivo con la fecha actual
+    String outputFile =
+        "C:/Users/PC/Documents/MultasBD/multas_$formattedDate.xlsx";
+    List<int>? fileBytes = excel.save();
+    //print('saving executed in ${stopwatch.elapsed}');
+    if (fileBytes != null) {
+      File(join(outputFile))
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(fileBytes);
+    }
 
     // Mostrar un mensaje de éxito
   }
