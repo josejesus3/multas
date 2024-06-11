@@ -129,7 +129,7 @@ class FormularioState extends ConsumerState<Formulario> {
             icon: Icons.delete_forever,
             label: 'Cancelar',
           ),
-          _ButtonAction(
+          _ButtonActionModificar(
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -158,6 +158,11 @@ class FormularioState extends ConsumerState<Formulario> {
               );
 
               ConnectionMysql().updateQuery(multa, widget.placaController.text);
+
+              ref.read(isButtonEnabled.notifier).update(
+                    (state) => false,
+                  );
+              _limpiarCampos();
             },
             icon: Icons.add_circle_outlined,
             label: 'Modificar',
@@ -241,7 +246,7 @@ class FormularioState extends ConsumerState<Formulario> {
   }
 }
 
-class _ButtonAction extends StatelessWidget {
+class _ButtonAction extends ConsumerWidget {
   final VoidCallback onPressed;
   final IconData? icon;
   final String label;
@@ -253,11 +258,38 @@ class _ButtonAction extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool isButton = ref.watch(isButtonEnabled);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 45, horizontal: 10),
       child: ElevatedButton.icon(
-        onPressed: onPressed,
+        onPressed: isButton == true ? null : onPressed,
+        icon: Icon(icon),
+        label: Text(label),
+      ),
+    );
+  }
+}
+
+class _ButtonActionModificar extends ConsumerWidget {
+  final VoidCallback onPressed;
+  final IconData? icon;
+  final String label;
+
+  const _ButtonActionModificar({
+    required this.onPressed,
+    this.icon,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool isButton = ref.watch(isButtonEnabled);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 45, horizontal: 10),
+      child: ElevatedButton.icon(
+        onPressed: isButton == true ? onPressed : null,
         icon: Icon(icon),
         label: Text(label),
       ),

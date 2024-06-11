@@ -97,7 +97,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       // Mostrar los datos encontrados en los TextField
       setState(() {
         placaController.text = searchedMultas[0].placa!;
-        cantidadController.text = searchedMultas[0].cantidadPago.toString();
+        cantidadController.text = searchedMultas[0].cantidad.toString();
         fechaController.text = searchedMultas[0].fecha!;
         folioController.text = searchedMultas[0].folio.toString();
         folioPagoController.text = searchedMultas[0].folioPago!;
@@ -110,6 +110,9 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
       // Actualizar el estado del Checkbox
       ref.read(checkBox.notifier).state = check;
+      ref.read(isButtonEnabled.notifier).update(
+            (state) => true,
+          );
     } else {
       // Si no se encontraron datos, puedes mostrar un mensaje o limpiar los campos
       ScaffoldMessenger.of(context).showSnackBar(
